@@ -12,12 +12,24 @@ public:
 	sf::Vector2f pos; //current position of bob
 	sf::Vector2f parent_pos;
 	//mass, upward velocity, acceleration, force, extension, radius of mass, length of string that connects this bob to its anchor
-	float m = 1, v = 0, a = 0, f = 0, k = 1, e = 0, radius = 7, length = 50;
+	float m = 1, v = 0, a = 0, f = 0, k = 1, e = 0, radius = 30, length = 50;
 	sf::Color color;
 	sf::CircleShape circle;
 	sf::Vertex line[2]; //the line that connects this bob and its anchor
 	Mass() {
-
+		parent_pos = sf::Vector2f(width / 2, 20);
+		m = 10;
+		k = 1;
+		e = 100;
+		original_pos = sf::Vector2f(width / 2, parent_pos.y + 400);
+		pos = sf::Vector2f(width / 2, original_pos.y + e);
+		color = sf::Color::Green;
+		circle.setRadius(radius);
+		circle.setFillColor(color);
+		circle.setPosition(pos);
+		circle.setOrigin(circle.getRadius(), circle.getRadius());
+		line[0] = sf::Vector2f(parent_pos);
+		line[1] = sf::Vector2f(pos);
 	}
 	//constructor takes mass, parent position(anchor), length of string from this bob to its anchor, spring constant, extension, color
 public: Mass(float mass, sf::Vector2f par, float len, float spring_const, float ext, sf::Color col) {
@@ -40,8 +52,8 @@ public: Mass(float mass, sf::Vector2f par, float len, float spring_const, float 
 		  a = f / m; //calculating acceleration
 		  v = v + a; //calculating velocity
 		  pos.y = pos.y + v; //calculating current position
-		  e =  pos.y - original_pos.y; //claculating new extension
-		 // v = v * 0.985f; //adding some damping
+		  e = pos.y - original_pos.y; //claculating new extension
+		   v = v * 0.985f; //adding some damping
 		  circle.setPosition(pos); //setting new position to the bob
 		  line[1] = sf::Vector2f(circle.getPosition()); //updating the position in line array
 	  }
@@ -51,24 +63,26 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), "My Window");
 	sf::Vector2f parent; // main anchor
 	parent.x = width / 2;
-	parent.y = 0;
+	parent.y = 20;
 	sf::CircleShape anchor;
 	anchor.setRadius(10.0f);
 	anchor.setPosition(parent);
 	anchor.setOrigin(anchor.getRadius(), anchor.getRadius());
 	anchor.setFillColor(sf::Color::Blue);
-	Mass masses[10]; //creating 10 bobs
+
+	Mass m;
+	/*Mass masses[10]; //creating 10 bobs
 	masses[0] = Mass(5, parent, 50, 1, 10, sf::Color::Red); //setting the anchor position of the first bob
 	int temp_len, temp_ext; // just some variable to randomly generate length of bob and extension
 	//setting up rest of the masses in the array
 	for (int i = 1; i < 10; i++) {
 		temp_len = 20 + rand() % 51;
 		temp_ext = 10 + rand() % 50;
-		masses[i] = Mass(50, masses[i - 1].pos,(float) temp_len, 10,(float) temp_ext, sf::Color::Green);
-	}
+		masses[i] = Mass(50, masses[i - 1].pos, (float)temp_len, 10, (float)temp_ext, sf::Color::Green);
+	}*/
 
 	while (window.isOpen()) {
-		for (int i = 0; i < 10; i++) {
+		/*for (int i = 0; i < 10; i++) {
 			//updating all masses
 			masses[i].update();
 			if (i > 0) {
@@ -77,7 +91,7 @@ int main() {
 				//updating the position in line array
 				masses[i].line[0] = sf::Vector2f(masses[i - 1].pos);
 			}
-		}
+		}*/
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
@@ -86,15 +100,18 @@ int main() {
 		}
 		Sleep(100);
 		window.clear(sf::Color::Black);
-		for (int i = 0; i < 10; i++) {
+		window.draw(m.line, 2, sf::Lines);
+		window.draw(m.circle);
+		/*for (int i = 0; i < 10; i++) {
 			//drawing all the connecting lines first
 			window.draw(masses[i].line, 2, sf::Lines);
 		}
 		for (int i = 0; i < 10; i++) {
 			//drawing all the bobs
 			window.draw(masses[i].circle);
-		}
+		}*/
 		window.draw(anchor);
 		window.display();
+		m.update();
 	}
 }
