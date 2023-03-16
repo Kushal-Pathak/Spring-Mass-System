@@ -69,7 +69,7 @@ int main() {
 	anchor.setPosition(parent);
 	anchor.setOrigin(anchor.getRadius(), anchor.getRadius());
 	anchor.setFillColor(sf::Color::Blue);
-	Mass m;
+	Mass m; //creating a new spring-mass-system with default constructor
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -79,10 +79,10 @@ int main() {
 		}
 		Sleep(100);
 		window.clear(sf::Color::Black);
-		window.draw(m.line, 2, sf::Lines);
-		window.draw(m.circle);
-		window.draw(anchor);
+		window.draw(m.line, 2, sf::Lines); //drawing the spring
+		window.draw(m.circle); //drawing the mass
+		window.draw(anchor); //drawing the anchor
 		window.display();
-		m.update();
+		m.update(); //updating the spring-mass-system
 	}
 }
